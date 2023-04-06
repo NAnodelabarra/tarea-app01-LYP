@@ -27,23 +27,16 @@ typedef struct {
     char ubicacion_sede[20];
 } Sede;
 
-//variables globales
 #define MAX_LINE_LENGTH 200
 
 Cliente* lista_clientes;
 int num_clientes;
-Plan* lista_planes;
-Sede* lista_sedes;
-int cambios_realizados;
 
 Cliente* leer_archivo_clientes(char* nombre_archivo, int* num_clientes) {
     FILE* archivo;
     char linea[MAX_LINE_LENGTH];
     char* campo;
     Cliente* lista_clientes = NULL;
-    Plan* lista_planes = NULL;
-    Sede* lista_sedes = NULL;
-    *num_clientes = 0;
     int capacidad = 0;
     int contador = 0;
     
@@ -107,7 +100,7 @@ void imprimir_clientes(Cliente* lista_clientes, int num_clientes, int indice) {
     
     printf("\n");
     printf("@imprimir_clientes():\n");
-    printf("Cliente numero %d\n", indice+1);
+    printf("Cliente %d:\n", indice+1);
     printf("RUT: %s\n", lista_clientes[indice].rut);
     printf("Nombre completo: %s\n", lista_clientes[indice].nombre_completo);
     printf("Edad: %d\n", lista_clientes[indice].edad);
@@ -122,7 +115,22 @@ void imprimir_clientes(Cliente* lista_clientes, int num_clientes, int indice) {
     imprimir_clientes(lista_clientes, num_clientes, indice+1);
 }
 
-
+// Función para mostrar el menú principal
+void mostrar_menu_principal() {
+    printf("== MENU PRINCIPAL ==\n");
+    printf("1. Agregar cliente\n");
+    printf("2. Quitar cliente\n");
+    printf("3. Editar datos del cliente\n");
+    printf("4. Agregar plan\n");
+    printf("5. Quitar plan\n");
+    printf("6. Cambiar plan y vigencia de un cliente\n");
+    printf("7. Agregar sede\n");
+    printf("8. Quitar sede\n");
+    printf("9. Cambiar sede de un cliente\n");
+    printf("10. Buscar cliente por RUT\n");
+    printf("11. Salir\n");
+    printf("Ingrese la opción deseada: ");
+}
 
 void agregar_cliente(Cliente** lista_clientes, int* num_clientes) {
     Cliente nuevo_cliente;
@@ -164,13 +172,10 @@ void agregar_cliente(Cliente** lista_clientes, int* num_clientes) {
         printf("Error al asignar memoria.\n");
         return;
     }
-  
+    
     (*lista_clientes)[*num_clientes - 1] = nuevo_cliente;
-  
-    printf("\nSe agrego exitosamente el siguiente  cliente:");
-    imprimir_clientes(*lista_clientes, *num_clientes, *num_clientes - 1);
-    printf("\n");
-  
+    
+    printf("El cliente ha sido agregado con éxito.\n\n");
 }
 
 
@@ -220,26 +225,54 @@ void buscar_cliente_rut() {
 }
 
 
+int init() {
+    
+    printf("\n@init():\n");
+    lista_clientes = leer_archivo_clientes("bigmuscle.csv", &num_clientes);
+    if (lista_clientes == NULL) {
+        printf("Error al leer el archivo de clientes.\n");
+        return 1;
+    }
+    
+    if (num_clientes > 0) {
+        printf("Se encontraron %d clientes.\n", num_clientes);
+        //imprimir_clientes(lista_clientes, num_clientes, 0);
+    } else {
+        printf("No se encontraron clientes en el archivo.\n");
+    }
+    
+    printf("\n");
+    return 0;
+}
 
-// Función para mostrar el menú principal
-void mostrar_menu_principal() {
-    printf("== MENU PRINCIPAL ==\n");
-    printf("1. Agregar cliente\n");
-    printf("2. Quitar cliente\n");
-    printf("3. Editar datos del cliente\n");
-    printf("4. Agregar plan\n");
-    printf("5. Quitar plan\n");
-    printf("6. Cambiar plan y vigencia de un cliente\n");
-    printf("7. Agregar sede\n");
-    printf("8. Quitar sede\n");
-    printf("9. Cambiar sede de un cliente\n");
-    printf("10. Buscar cliente por RUT\n");
-    printf("11. Salir\n");
-    printf("Ingrese la opción deseada: ");
+int end() {
+    // Liberar la memoria asignada a la lista de clientes
+    free(lista_clientes);
+    return 0;
+}
+
+int orq() {
+    init();
+    agregar_cliente(&lista_clientes, &num_clientes);
+    imprimir_clientes(lista_clientes, num_clientes, num_clientes - 1);
+    end();
+    return 0;
+}
+
+int main() {
+    orq();
+    return 0;
 }
 
 int marcador() {
     int opcion = 0;
+    int cambios_realizados = 0;
+    Cliente* lista_clientes = NULL;
+    Plan* lista_planes = NULL;
+    Sede* lista_sedes = NULL;
+    int num_clientes = 0;
+    int num_planes = 0;
+    int num_sedes = 0;
     
     // Implementar código aquí para leer los datos del archivo "bigmuscle.csv"
     // y cargarlos en las listas de clientes, planes y sedes
@@ -288,6 +321,10 @@ int marcador() {
                 buscar_cliente_rut();
                 break;
             case 11:
+                if (cambios_realizados) {
+                    // Implementar código aquí para guardar los datos en el archivo "bigmuscle.csv"
+                    // y en el archivo de respaldo "bigmuscle.bak"
+                }
                 break;
             default:
                 printf("Opción inválida.\n");
@@ -299,47 +336,3 @@ int marcador() {
     
 }
 
-int init() {
-  
-    int cambios_realizados = 0;
-    int num_planes = 0;
-    int num_sedes = 0;
-    
-    printf("\n@init():\n");
-    lista_clientes = leer_archivo_clientes("bigmuscle.csv", &num_clientes);
-    if (lista_clientes == NULL) {
-        printf("Error al leer el archivo de clientes.\n");
-        return 1;
-    }
-    
-    if (num_clientes > 0) {
-        printf("Se encontraron %d clientes.\n", num_clientes);
-        //imprimir_clientes(lista_clientes, num_clientes, 0);
-    } else {
-        printf("No se encontraron clientes en el archivo.\n");
-    }
-    
-    printf("\n");
-    return 0;
-}
-
-int end() {
-    if (cambios_realizados) {
-        // Implementar código aquí para guardar los datos en el archivo "bigmuscle.csv"
-        // y en el archivo de respaldo "bigmuscle.bak"
-    }
-    free(lista_clientes);
-    return 0;
-}
-
-int orq() {
-    init();
-    marcador();
-    end();
-    return 0;
-}
-
-int main() {
-    orq();
-    return 0;
-}
