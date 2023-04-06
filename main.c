@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Estructura para los datos de un cliente
+//
+// Definimos estructuras
 typedef struct {
     char rut[12];
     char nombre_completo[50];
@@ -15,19 +16,18 @@ typedef struct {
     char ubicacion_sede[20];
 } Cliente;
 
-// Estructura para los datos de un plan
 typedef struct {
     char cod_plan[4];
     char descripcion_plan[20];
 } Plan;
 
-// Estructura para los datos de una sede
 typedef struct {
     char cod_sede[4];
     char ubicacion_sede[20];
 } Sede;
 
-//variables globales
+//
+//Variables globales
 #define MAX_LINE_LENGTH 200
 
 Cliente* lista_clientes;
@@ -36,68 +36,70 @@ Plan* lista_planes;
 Sede* lista_sedes;
 int cambios_realizados;
 
+//
+//Funciones basicas
 Cliente* leer_archivo_clientes(char* nombre_archivo, int* num_clientes) {
-    FILE* archivo;
-    char linea[MAX_LINE_LENGTH];
-    char* campo;
-    Cliente* lista_clientes = NULL;
-    Plan* lista_planes = NULL;
-    Sede* lista_sedes = NULL;
-    *num_clientes = 0;
-    int capacidad = 0;
-    int contador = 0;
-    
-    archivo = fopen(nombre_archivo, "r");
-    if (archivo == NULL) {
-        printf("Error al abrir el archivo %s.\n", nombre_archivo);
-        return NULL;
-    }
+  FILE* archivo;
+  char linea[MAX_LINE_LENGTH];
+  char* campo;
+  Cliente* lista_clientes = NULL;
+  Plan* lista_planes = NULL;
+  Sede* lista_sedes = NULL;
+  *num_clientes = 0;
+  int capacidad = 0;
+  int contador = 0;
   
-    // Leer y descartar la primera línea (nombres de las columnas)
-    if (fgets(linea, MAX_LINE_LENGTH, archivo) == NULL) {
-        printf("Error al leer el archivo %s.\n", nombre_archivo);
-        fclose(archivo);
-        return NULL;
-    }
-    
-    // Leer cada línea del archivo y guardar los datos en una estructura Cliente
-    while (fgets(linea, MAX_LINE_LENGTH, archivo) != NULL) {
-        if (contador >= capacidad) {
-            capacidad += 10;
-            lista_clientes = (Cliente*) realloc(lista_clientes, capacidad * sizeof(Cliente));
-            if (lista_clientes == NULL) {
-                printf("Error al asignar memoria.\n");
-                fclose(archivo);
-                return NULL;
-            }
-        }
-        
-        // Separar los campos de la línea usando la coma como separador
-        campo = strtok(linea, ",");
-        strcpy(lista_clientes[contador].rut, campo);
-        campo = strtok(NULL, ",");
-        strcpy(lista_clientes[contador].nombre_completo, campo);
-        campo = strtok(NULL, ",");
-        lista_clientes[contador].edad = atoi(campo);
-        campo = strtok(NULL, ",");
-        strcpy(lista_clientes[contador].cod_plan, campo);
-        campo = strtok(NULL, ",");
-        strcpy(lista_clientes[contador].descripcion_plan, campo);
-        campo = strtok(NULL, ",");
-        strcpy(lista_clientes[contador].desde, campo);
-        campo = strtok(NULL, ",");
-        strcpy(lista_clientes[contador].hasta, campo);
-        campo = strtok(NULL, ",");
-        strcpy(lista_clientes[contador].cod_sede, campo);
-        campo = strtok(NULL, ",");
-        strcpy(lista_clientes[contador].ubicacion_sede, campo);
-        
-        contador++;
-    }
-    
+  archivo = fopen(nombre_archivo, "r");
+  if (archivo == NULL) {
+    printf("Error al abrir el archivo %s.\n", nombre_archivo);
+    return NULL;
+  }
+
+  // Leer y descartar la primera línea (nombres de las columnas)
+  if (fgets(linea, MAX_LINE_LENGTH, archivo) == NULL) {
+    printf("Error al leer el archivo %s.\n", nombre_archivo);
     fclose(archivo);
-    *num_clientes = contador;
-    return lista_clientes;
+    return NULL;
+  }
+  
+  // Leer cada línea del archivo y guardar los datos en una estructura Cliente
+  while (fgets(linea, MAX_LINE_LENGTH, archivo) != NULL) {
+    if (contador >= capacidad) {
+        capacidad += 10;
+        lista_clientes = (Cliente*) realloc(lista_clientes, capacidad * sizeof(Cliente));
+        if (lista_clientes == NULL) {
+            printf("Error al asignar memoria.\n");
+            fclose(archivo);
+            return NULL;
+        }
+    }
+      
+    // Separar los campos de la línea usando la coma como separador
+    campo = strtok(linea, ",");
+    strcpy(lista_clientes[contador].rut, campo);
+    campo = strtok(NULL, ",");
+    strcpy(lista_clientes[contador].nombre_completo, campo);
+    campo = strtok(NULL, ",");
+    lista_clientes[contador].edad = atoi(campo);
+    campo = strtok(NULL, ",");
+    strcpy(lista_clientes[contador].cod_plan, campo);
+    campo = strtok(NULL, ",");
+    strcpy(lista_clientes[contador].descripcion_plan, campo);
+    campo = strtok(NULL, ",");
+    strcpy(lista_clientes[contador].desde, campo);
+    campo = strtok(NULL, ",");
+    strcpy(lista_clientes[contador].hasta, campo);
+    campo = strtok(NULL, ",");
+    strcpy(lista_clientes[contador].cod_sede, campo);
+    campo = strtok(NULL, ",");
+    strcpy(lista_clientes[contador].ubicacion_sede, campo);
+    
+    contador++;
+  }
+  
+  fclose(archivo);
+  *num_clientes = contador;
+  return lista_clientes;
 }
 
 void imprimir_clientes(Cliente* lista_clientes, int num_clientes, int indice) {
@@ -122,7 +124,8 @@ void imprimir_clientes(Cliente* lista_clientes, int num_clientes, int indice) {
     imprimir_clientes(lista_clientes, num_clientes, indice+1);
 }
 
-
+//
+// Funciones solicitadas por enunciado de la tarea
 
 void agregar_cliente(Cliente** lista_clientes, int* num_clientes) {
     Cliente nuevo_cliente;
@@ -173,7 +176,6 @@ void agregar_cliente(Cliente** lista_clientes, int* num_clientes) {
   
 }
 
-
 // Función para quitar un cliente
 void quitar_cliente() {
     // Implementar código aquí
@@ -219,117 +221,119 @@ void buscar_cliente_rut() {
     // Implementar código aquí
 }
 
-
+//
+// Funciones verificadoras
 
 // Función para mostrar el menú principal
 void mostrar_menu_principal() {
-    printf("== MENU PRINCIPAL ==\n");
-    printf("1. Agregar cliente\n");
-    printf("2. Quitar cliente\n");
-    printf("3. Editar datos del cliente\n");
-    printf("4. Agregar plan\n");
-    printf("5. Quitar plan\n");
-    printf("6. Cambiar plan y vigencia de un cliente\n");
-    printf("7. Agregar sede\n");
-    printf("8. Quitar sede\n");
-    printf("9. Cambiar sede de un cliente\n");
-    printf("10. Buscar cliente por RUT\n");
-    printf("11. Salir\n");
-    printf("Ingrese la opción deseada: ");
+  printf("MENU PRINCIPAL\n");
+  printf("Ingrese un numero:\n");
+  printf("( 1 ) Agregar cliente\n");
+  printf("( 2 ) Quitar cliente\n");
+  printf("( 3 ) Editar datos del cliente\n");
+  printf("( 4 ) Agregar plan\n");
+  printf("( 5 ) Quitar plan\n");
+  printf("( 6 ) Cambiar plan y vigencia de un cliente\n");
+  printf("( 7 ) Agregar sede\n");
+  printf("( 8 ) Quitar sede\n");
+  printf("( 9 ) Cambiar sede de un cliente\n");
+  printf("( 10) Buscar cliente por RUT\n");
+  printf("( 11) Salir\n");
+  printf("\n");
 }
 
 int marcador() {
-    int opcion = 0;
-    
-    // Implementar código aquí para leer los datos del archivo "bigmuscle.csv"
-    // y cargarlos en las listas de clientes, planes y sedes
-    
-    while (opcion != 11) {
-        mostrar_menu_principal();
-        scanf("%d", &opcion);
-        switch (opcion) {
-            case 1:
-                agregar_cliente(&lista_clientes, &num_clientes);
-                cambios_realizados = 1;
-                break;
-            case 2:
-                quitar_cliente();
-                cambios_realizados = 1;
-                break;
-            case 3:
-                editar_cliente();
-                cambios_realizados = 1;
-                break;
-            case 4:
-                agregar_plan();
-                cambios_realizados = 1;
-                break;
-            case 5:
-                quitar_plan();
-                cambios_realizados = 1;
-                break;
-            case 6:
-                cambiar_plan_cliente();
-                cambios_realizados = 1;
-                break;
-            case 7:
-                agregar_sede();
-                cambios_realizados = 1;
-                break;
-            case 8:
-                quitar_sede();
-                cambios_realizados = 1;
-                break;
-            case 9:
-                cambiar_sede_cliente();
-                cambios_realizados = 1;
-                break;
-            case 10:
-                buscar_cliente_rut();
-                break;
-            case 11:
-                break;
-            default:
-                printf("Opción inválida.\n");
-                break;
-        }
+  int opcion = 0;
+  
+  // Implementar código aquí para leer los datos del archivo "bigmuscle.csv"
+  // y cargarlos en las listas de clientes, planes y sedes
+  
+  while (opcion != 11) {
+    mostrar_menu_principal();
+    scanf("%d", &opcion);
+    switch (opcion) {
+      case 1:
+        agregar_cliente(&lista_clientes, &num_clientes);
+        cambios_realizados = 1;
+        break;
+      case 2:
+        quitar_cliente();
+        cambios_realizados = 1;
+        break;
+      case 3:
+        editar_cliente();
+        cambios_realizados = 1;
+        break;
+      case 4:
+        agregar_plan();
+        cambios_realizados = 1;
+        break;
+      case 5:
+        quitar_plan();
+        cambios_realizados = 1;
+        break;
+      case 6:
+        cambiar_plan_cliente();
+        cambios_realizados = 1;
+        break;
+      case 7:
+        agregar_sede();
+        cambios_realizados = 1;
+        break;
+      case 8:
+        quitar_sede();
+        cambios_realizados = 1;
+        break;
+      case 9:
+        cambiar_sede_cliente();
+        cambios_realizados = 1;
+        break;
+      case 10:
+        buscar_cliente_rut();
+        break;
+      case 11:
+        break;
+      default:
+        printf("Opción inválida.\n");
+        break;
     }
-    
-    // Implementar código aquí para liberar la memoria de las listas de clientes, planes y sedes
-    
+  }
+  
+  // Implementar código aquí para liberar la memoria de las listas de clientes, planes y sedes
+  
 }
 
 int init() {
+
+  int cambios_realizados = 0;
+  int num_planes = 0;
+  int num_sedes = 0;
   
-    int cambios_realizados = 0;
-    int num_planes = 0;
-    int num_sedes = 0;
-    
-    printf("\n@init():\n");
-    lista_clientes = leer_archivo_clientes("bigmuscle.csv", &num_clientes);
-    if (lista_clientes == NULL) {
-        printf("Error al leer el archivo de clientes.\n");
-        return 1;
-    }
-    
-    if (num_clientes > 0) {
-        printf("Se encontraron %d clientes.\n", num_clientes);
-        //imprimir_clientes(lista_clientes, num_clientes, 0);
-    } else {
-        printf("No se encontraron clientes en el archivo.\n");
-    }
-    
-    printf("\n");
-    return 0;
+  printf("\n@init():\n");
+  lista_clientes = leer_archivo_clientes("bigmuscle.csv", &num_clientes);
+  if (lista_clientes == NULL) {
+    printf("Error al leer el archivo de clientes.\n");
+    return 1;
+  }
+  
+  if (num_clientes > 0) {
+    printf("Se encontraron %d clientes.\n", num_clientes);
+    //imprimir_clientes(lista_clientes, num_clientes, 0);
+  } else {
+    printf("No se encontraron clientes en el archivo.\n");
+  }
+  
+  printf("\n");
+  return 0;
 }
 
 int end() {
-    if (cambios_realizados) {
-        // Implementar código aquí para guardar los datos en el archivo "bigmuscle.csv"
-        // y en el archivo de respaldo "bigmuscle.bak"
-    }
-    free(lista_clientes);
-    return 0;
+  if (cambios_realizados) {
+    // Implementar código aquí para guardar los datos en el archivo "bigmuscle.csv"
+    // y en el archivo de respaldo "bigmuscle.bak"
+  }
+  free(lista_clientes);
+  return 0;
 }
 
 int orq() {
